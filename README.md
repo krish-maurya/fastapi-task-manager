@@ -202,7 +202,23 @@ This starts:
 - Backend on `8000`
 - Frontend on `5173`
 
-## Notes
+# Scalability Notes
 
-- SQLAlchemy creates tables on startup for quick onboarding.
-- For production, use Alembic migrations and stronger secret management.
+## Caching
+Redis is integrated for caching frequent read operations (e.g., task lists),
+reducing database load at scale.
+
+## Microservices
+The current monolith can be split into independent services:
+- Auth Service (JWT issuing + validation)
+- Task Service (CRUD operations)
+- Notification Service (email/webhook triggers)
+Each service can be deployed, scaled, and updated independently.
+
+## Database
+- Connection pooling via SQLAlchemy to handle concurrent requests efficiently.
+- For high scale, read replicas can offload SELECT queries from the primary DB.
+
+## Async
+FastAPI supports async endpoints natively, enabling high concurrency
+without blocking threads under heavy load.
