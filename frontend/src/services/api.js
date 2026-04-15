@@ -1,4 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
+const API_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1"
+).replace(/\/+$/, "");
 
 function getHeaders(includeAuth = false) {
   const headers = { "Content-Type": "application/json" };
@@ -12,7 +14,8 @@ function getHeaders(includeAuth = false) {
 }
 
 async function request(path, options = {}, includeAuth = false) {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  const response = await fetch(`${API_BASE_URL}${normalizedPath}`, {
     ...options,
     headers: {
       ...getHeaders(includeAuth),
